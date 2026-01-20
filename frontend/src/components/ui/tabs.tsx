@@ -25,8 +25,8 @@ interface TabsProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
-  ({ className, value: controlledValue, defaultValue, onValueChange, children, ...props }, ref) => {
-    const [uncontrolledValue, setUncontrolledValue] = React.useState(defaultValue || '');
+  ({ className, value: controlledValue, defaultValue = '', onValueChange, children, ...props }, ref) => {
+    const [uncontrolledValue, setUncontrolledValue] = React.useState(defaultValue);
 
     const isControlled = controlledValue !== undefined;
     const value = isControlled ? controlledValue : uncontrolledValue;
@@ -38,6 +38,7 @@ const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
       onValueChange?.(newValue);
     }, [isControlled, onValueChange]);
 
+    // Always render children, but context will control visibility
     return (
       <TabsContext.Provider value={{ value, onValueChange: handleValueChange }}>
         <div ref={ref} className={cn('', className)} {...props}>
@@ -101,25 +102,26 @@ interface TabsContentProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const TabsContent = React.forwardRef<HTMLDivElement, TabsContentProps>(
-  ({ className, value, ...props }, ref) => {
+  ({ className, value, children, ...props }, ref) => {
     const { value: selectedValue } = useTabsContext();
     const isSelected = selectedValue === value;
 
-    if (!isSelected) {
-      return null;
-    }
-
+    // Use CSS to hide/show instead of returning null to prevent hydration issues
     return (
       <div
         ref={ref}
         role="tabpanel"
         data-state={isSelected ? 'active' : 'inactive'}
+        hidden={!isSelected}
         className={cn(
           'mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+          !isSelected && 'hidden',
           className
         )}
         {...props}
-      />
+      >
+        {children}
+      </div>
     );
   }
 );

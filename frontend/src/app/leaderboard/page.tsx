@@ -31,25 +31,32 @@ export default function LeaderboardPage() {
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<'profit' | 'sessions' | 'roi' | 'wagered'>('profit');
 
+  const DEFAULT_RTP = 96;
+
   useEffect(() => {
     const fetchStreamers = async () => {
       try {
-        const response = await fetch('/api/v1/streamers');
-        if (!response.ok) throw new Error('Failed to fetch');
+        const response = await fetch('/api/v1/streamers?limit=100');
+        if (!response.ok) {
+          throw new Error(`Failed to fetch: ${response.status}`);
+        }
         const data = await response.json();
 
-        // Map API response to Streamer type
-        const mappedStreamers = (Array.isArray(data) ? data : data.streamers || []).map((s: any) => ({
-          id: s.id,
-          name: s.name,
-          followers: s.followers,
-          totalSessions: s.totalSessions,
-          totalWagered: s.totalWagered,
-          totalPayouts: s.totalPayouts,
-          profitLoss: s.profitLoss,
-          roi: s.roi,
-          averageRtp: s.averageRtp,
-          platform: s.platform
+        // Handle both array and object with streamers array
+        const streamersArray = Array.isArray(data) ? data : (data.streamers || []);
+
+        // Map API response to Streamer type with fallbacks
+        const mappedStreamers = streamersArray.map((s: any) => ({
+          id: s.id || '',
+          name: s.name || s.displayName || s.username || 'Unknown',
+          followers: s.followers || s.followersCount || s.followerCount || 0,
+          totalSessions: s.totalSessions || 0,
+          totalWagered: s.totalWagered || 0,
+          totalPayouts: s.totalPayouts || s.totalWon || 0,
+          profitLoss: s.profitLoss || s.netProfitLoss || 0,
+          roi: s.roi || 0,
+          averageRtp: s.averageRtp || s.lifetimeRtp || DEFAULT_RTP,
+          platform: s.platform || 'kick'
         }));
 
         setStreamers(mappedStreamers);

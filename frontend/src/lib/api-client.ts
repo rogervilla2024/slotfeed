@@ -252,13 +252,24 @@ export async function getLiveStreams() {
   return fetchApi<LiveStream[]>(endpoint, {}, 'live-streams');
 }
 
-export async function getBigWins(): Promise<ApiResponse<any[]>> {
+export interface BigWin {
+  id: string;
+  streamerName: string;
+  gameName: string;
+  amount: number;
+  multiplier: number;
+  timestamp: string;
+  platform: string;
+  videoUrl: string;
+}
+
+export async function getBigWins(): Promise<ApiResponse<BigWin[]>> {
   const endpoint = '/big-wins/';
   const response = await fetchApi<{ wins: any[]; total: number }>(endpoint, {}, 'big-wins');
 
   // Map API response to frontend expected format
   if (response.data && response.data.wins) {
-    const mappedWins = response.data.wins.map((win: any) => ({
+    const mappedWins: BigWin[] = response.data.wins.map((win: any) => ({
       id: win.id,
       streamerName: win.streamer?.displayName || win.streamer?.username || 'Unknown',
       gameName: win.game?.name || 'Unknown',
