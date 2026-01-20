@@ -1,5 +1,13 @@
 export type Platform = 'kick' | 'twitch' | 'youtube';
 
+export interface StreamerSocialLinks {
+  kick?: string;
+  twitch?: string;
+  youtube?: string;
+  twitter?: string;
+  discord?: string;
+}
+
 export interface Streamer {
   id: string;
   username: string;
@@ -11,6 +19,7 @@ export interface Streamer {
   followerCount: number;
   isLive: boolean;
   lifetimeStats: StreamerLifetimeStats;
+  socialLinks?: StreamerSocialLinks;
   createdAt: Date;
   updatedAt: Date;
 }

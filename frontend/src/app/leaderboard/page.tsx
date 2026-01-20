@@ -2,9 +2,9 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Crown, TrendingUp, Coins, Users, Zap } from 'lucide-react';
 import {
@@ -26,6 +26,7 @@ interface Streamer {
 }
 
 export default function LeaderboardPage() {
+  const router = useRouter();
   const [streamers, setStreamers] = useState<Streamer[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<'profit' | 'sessions' | 'roi' | 'wagered'>('profit');
@@ -175,13 +176,13 @@ export default function LeaderboardPage() {
         </div>
       </section>
 
-      <section className="container mx-auto px-4 py-12">
+      <section className="container mx-auto px-4 py-8 md:py-12">
         <Tabs defaultValue="profit" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="profit">Top Profits</TabsTrigger>
-            <TabsTrigger value="roi">Best ROI</TabsTrigger>
-            <TabsTrigger value="sessions">Most Sessions</TabsTrigger>
-            <TabsTrigger value="wagered">Total Wagered</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto gap-1 p-1">
+            <TabsTrigger value="profit" className="py-2.5">Top Profits</TabsTrigger>
+            <TabsTrigger value="roi" className="py-2.5">Best ROI</TabsTrigger>
+            <TabsTrigger value="sessions" className="py-2.5">Most Sessions</TabsTrigger>
+            <TabsTrigger value="wagered" className="py-2.5">Total Wagered</TabsTrigger>
           </TabsList>
 
           {/* Top Profits */}
@@ -278,51 +279,54 @@ export default function LeaderboardPage() {
 
         {/* Full Rankings Table */}
         <div className="mt-12">
-          <Card>
-            <CardHeader>
+          <Card className="overflow-hidden">
+            <CardHeader className="border-b border-border/50 bg-muted/20">
               <div className="flex items-center justify-between">
-                <CardTitle>All Rankings (Sorted by Profit)</CardTitle>
-                <Badge variant="outline">{streamers.length} streamers</Badge>
+                <CardTitle className="text-xl">All Rankings</CardTitle>
+                <Badge variant="secondary" className="font-normal">{streamers.length} streamers</Badge>
               </div>
+              <p className="text-sm text-muted-foreground">Sorted by profit/loss</p>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-0 pt-0">
               {loading ? (
                 <p className="text-muted-foreground py-8">Loading...</p>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                  <table className="w-full text-sm min-w-[700px]">
                     <thead>
-                      <tr className="border-b">
-                        <th className="text-left p-3 font-semibold text-muted-foreground">Rank</th>
-                        <th className="text-left p-3 font-semibold text-muted-foreground">Streamer</th>
-                        <th className="text-right p-3 font-semibold text-muted-foreground">Sessions</th>
-                        <th className="text-right p-3 font-semibold text-muted-foreground">Wagered</th>
-                        <th className="text-right p-3 font-semibold text-muted-foreground">Profit/Loss</th>
-                        <th className="text-right p-3 font-semibold text-muted-foreground">ROI</th>
-                        <th className="text-right p-3 font-semibold text-muted-foreground">Avg RTP</th>
+                      <tr className="border-b border-border bg-muted/30">
+                        <th className="text-left p-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Rank</th>
+                        <th className="text-left p-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Streamer</th>
+                        <th className="text-right p-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Sessions</th>
+                        <th className="text-right p-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Wagered</th>
+                        <th className="text-right p-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Profit/Loss</th>
+                        <th className="text-right p-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">ROI</th>
+                        <th className="text-right p-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Avg RTP</th>
                       </tr>
                     </thead>
                     <tbody>
                       {sortedStreamers.map((streamer, idx) => (
-                        <Link key={streamer.id} href={`/streamer/${streamer.name.toLowerCase()}`}>
-                          <tr className="border-b hover:bg-muted/50 transition-colors cursor-pointer">
-                            <td className="p-3 font-semibold">#{idx + 1}</td>
-                            <td className="p-3">
-                              <p className="font-medium hover:text-primary">{streamer.name}</p>
-                            </td>
-                            <td className="p-3 text-right">{streamer.totalSessions}</td>
-                            <td className="p-3 text-right">${(streamer.totalWagered / 1000000).toFixed(1)}M</td>
-                            <td className={`p-3 text-right font-semibold ${streamer.profitLoss >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                              ${streamer.profitLoss.toFixed(0)}
-                            </td>
-                            <td className={`p-3 text-right font-semibold ${streamer.roi >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                              {streamer.roi.toFixed(1)}%
-                            </td>
-                            <td className="p-3 text-right text-muted-foreground">
-                              {streamer.averageRtp.toFixed(2)}%
-                            </td>
-                          </tr>
-                        </Link>
+                        <tr
+                          key={streamer.id}
+                          onClick={() => router.push(`/streamer/${streamer.name.toLowerCase()}`)}
+                          className="border-b border-border/50 hover:bg-muted/50 transition-colors cursor-pointer"
+                        >
+                          <td className="p-4 font-bold text-muted-foreground">#{idx + 1}</td>
+                          <td className="p-4">
+                            <span className="font-semibold hover:text-primary transition-colors">{streamer.name}</span>
+                          </td>
+                          <td className="p-4 text-right tabular-nums">{streamer.totalSessions}</td>
+                          <td className="p-4 text-right tabular-nums">${(streamer.totalWagered / 1000000).toFixed(1)}M</td>
+                          <td className={`p-4 text-right font-semibold tabular-nums ${streamer.profitLoss >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                            {streamer.profitLoss >= 0 ? '+' : ''}${streamer.profitLoss.toLocaleString()}
+                          </td>
+                          <td className={`p-4 text-right font-semibold tabular-nums ${streamer.roi >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                            {streamer.roi >= 0 ? '+' : ''}{streamer.roi.toFixed(1)}%
+                          </td>
+                          <td className="p-4 text-right text-muted-foreground tabular-nums">
+                            {streamer.averageRtp.toFixed(2)}%
+                          </td>
+                        </tr>
                       ))}
                     </tbody>
                   </table>

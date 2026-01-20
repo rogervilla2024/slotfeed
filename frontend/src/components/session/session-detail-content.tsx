@@ -108,6 +108,15 @@ export function SessionDetailContent({
       const streamerResponse = await fetch(`/api/v1/streamers/${username}`);
       if (streamerResponse.ok) {
         const streamerData = await streamerResponse.json();
+        const lifetimeStats = streamerData.lifetimeStats || {
+          totalSessions: 0,
+          totalHoursStreamed: 0,
+          totalWagered: 0,
+          totalWon: 0,
+          biggestWin: 0,
+          biggestMultiplier: 0,
+          averageRtp: 96.0,
+        };
         setStreamer({
           id: streamerData.id,
           username: streamerData.username,
@@ -117,6 +126,8 @@ export function SessionDetailContent({
           avatarUrl: streamerData.avatarUrl || streamerData.avatar_url,
           followerCount: streamerData.followerCount || streamerData.follower_count || 0,
           isLive: streamerData.isLive || streamerData.is_live || false,
+          socialLinks: streamerData.socialLinks,
+          lifetimeStats,
           createdAt: new Date(streamerData.createdAt || streamerData.created_at || Date.now()),
           updatedAt: new Date(streamerData.updatedAt || streamerData.updated_at || Date.now()),
         });
@@ -418,11 +429,23 @@ export function SessionDetailContent({
         <div className="flex justify-center pt-4">
           <Button size="lg" asChild>
             <a
-              href={`https://kick.com/${streamer.username}`}
+              href={(() => {
+                const platform = streamer.platform || 'kick';
+                if (streamer.socialLinks) {
+                  const socialUrl = (streamer.socialLinks as Record<string, string | undefined>)[platform];
+                  if (socialUrl) return socialUrl;
+                }
+                switch (platform) {
+                  case 'kick': return `https://kick.com/${streamer.username}`;
+                  case 'twitch': return `https://twitch.tv/${streamer.username}`;
+                  case 'youtube': return `https://youtube.com/@${streamer.username}`;
+                  default: return `https://kick.com/${streamer.username}`;
+                }
+              })()}
               target="_blank"
               rel="noopener noreferrer"
             >
-              Watch Live on Kick
+              Watch Live on {streamer.platform ? streamer.platform.charAt(0).toUpperCase() + streamer.platform.slice(1) : 'Kick'}
               <ExternalLink className="ml-2 h-4 w-4" />
             </a>
           </Button>

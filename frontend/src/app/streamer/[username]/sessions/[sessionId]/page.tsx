@@ -124,6 +124,21 @@ export default async function SessionDetailPage({ params }: PageProps) {
       notFound();
     }
 
+    // Get platform URL from socialLinks or construct from username
+    const getPlatformUrl = () => {
+      const platform = streamer.platform || 'kick';
+      if (streamer.socialLinks) {
+        const socialUrl = (streamer.socialLinks as Record<string, string | undefined>)[platform];
+        if (socialUrl) return socialUrl;
+      }
+      switch (platform) {
+        case 'kick': return `https://kick.com/${username}`;
+        case 'twitch': return `https://twitch.tv/${username}`;
+        case 'youtube': return `https://youtube.com/@${username}`;
+        default: return `https://kick.com/${username}`;
+      }
+    };
+
     // JSON-LD Structured Data for SEO
     const jsonLd = {
       '@context': 'https://schema.org',
@@ -138,7 +153,7 @@ export default async function SessionDetailPage({ params }: PageProps) {
       eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
       location: {
         '@type': 'VirtualLocation',
-        url: `https://kick.com/${username}`,
+        url: getPlatformUrl(),
       },
       performer: {
         '@type': 'Person',

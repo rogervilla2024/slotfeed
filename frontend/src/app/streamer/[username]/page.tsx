@@ -41,6 +41,13 @@ interface StreamerData {
     biggestMultiplier: number;
     averageRtp: number;
   };
+  socialLinks?: {
+    kick?: string;
+    twitch?: string;
+    youtube?: string;
+    twitter?: string;
+    discord?: string;
+  };
   createdAt: string;
   updatedAt: string;
 }
@@ -182,11 +189,11 @@ export default function StreamerProfilePage() {
     .slice(0, 5)
     .map((g) => g.gameName);
 
-  // Platform URL mapping
+  // Platform URL mapping - use socialLinks from API if available, fallback to constructed URLs
   const platformUrls = {
-    kick: `https://kick.com/${streamer.username}`,
-    twitch: `https://twitch.tv/${streamer.username}`,
-    youtube: `https://youtube.com/@${streamer.username}`,
+    kick: streamer.socialLinks?.kick || `https://kick.com/${streamer.username}`,
+    twitch: streamer.socialLinks?.twitch || `https://twitch.tv/${streamer.username}`,
+    youtube: streamer.socialLinks?.youtube || `https://youtube.com/@${streamer.username}`,
   };
 
   return (

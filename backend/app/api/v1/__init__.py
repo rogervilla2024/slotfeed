@@ -13,6 +13,7 @@ from .admin import router as admin_router
 from .ml_analytics import router as ml_analytics_router
 from .dashboard import router as dashboard_router
 from .health import router as health_router
+from .big_wins import router as big_wins_router
 
 router = APIRouter()
 
@@ -30,3 +31,4 @@ router.include_router(dashboard_router, prefix="/dashboard", tags=["dashboard"])
 router.include_router(discord_router)
 router.include_router(admin_router, prefix="/admin", tags=["admin"])
 router.include_router(health_router)
+router.include_router(big_wins_router, prefix="/big-wins", tags=["big-wins"])

@@ -9,7 +9,16 @@ import { ExternalLink, Bell, Play } from 'lucide-react';
 import { useState } from 'react';
 
 interface StreamerHeaderProps {
-  streamer: Streamer & { livestream?: { id: number; title: string; viewerCount: number } };
+  streamer: Streamer & {
+    livestream?: { id: number; title: string; viewerCount: number };
+    socialLinks?: {
+      kick?: string;
+      twitch?: string;
+      youtube?: string;
+      twitter?: string;
+      discord?: string;
+    };
+  };
   className?: string;
 }
 
@@ -26,6 +35,13 @@ export function StreamerHeader({ streamer, className }: StreamerHeaderProps) {
   const platform = streamer.platform || 'kick';
 
   const getPlatformUrl = () => {
+    // First try to use the actual platform URL from socialLinks
+    if (streamer.socialLinks) {
+      const socialUrl = streamer.socialLinks[platform as keyof typeof streamer.socialLinks];
+      if (socialUrl) return socialUrl;
+    }
+
+    // Fallback to constructing URL from username
     switch (platform) {
       case 'kick':
         return `https://kick.com/${streamer.username}`;
