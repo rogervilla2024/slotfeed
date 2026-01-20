@@ -1,0 +1,146 @@
+{
+  "game_id": "the-dog-house",
+  "game_name": "The Dog House",
+  "provider": "pragmatic-play",
+  "version": "1.0",
+  "last_updated": "2026-01-04",
+  "rtp": 96.51,
+  "volatility": "high",
+  "max_multiplier": 6750,
+
+  "resolution": {
+    "width": 1280,
+    "height": 720
+  },
+
+  "regions": {
+    "balance": {
+      "x": 45,
+      "y": 680,
+      "width": 180,
+      "height": 35,
+      "expected_format": "currency"
+    },
+    "bet": {
+      "x": 540,
+      "y": 680,
+      "width": 160,
+      "height": 35,
+      "expected_format": "currency"
+    },
+    "win": {
+      "x": 1040,
+      "y": 680,
+      "width": 195,
+      "height": 35,
+      "expected_format": "currency"
+    },
+    "sticky_wild_multiplier_1": {
+      "x": 250,
+      "y": 180,
+      "width": 80,
+      "height": 50,
+      "expected_format": "multiplier",
+      "trigger_condition": "bonus_active",
+      "notes": "Reel 1 sticky wild multiplier"
+    },
+    "sticky_wild_multiplier_2": {
+      "x": 410,
+      "y": 180,
+      "width": 80,
+      "height": 50,
+      "expected_format": "multiplier",
+      "trigger_condition": "bonus_active"
+    },
+    "sticky_wild_multiplier_3": {
+      "x": 570,
+      "y": 180,
+      "width": 80,
+      "height": 50,
+      "expected_format": "multiplier",
+      "trigger_condition": "bonus_active"
+    },
+    "sticky_wild_multiplier_4": {
+      "x": 730,
+      "y": 180,
+      "width": 80,
+      "height": 50,
+      "expected_format": "multiplier",
+      "trigger_condition": "bonus_active"
+    },
+    "sticky_wild_multiplier_5": {
+      "x": 890,
+      "y": 180,
+      "width": 80,
+      "height": 50,
+      "expected_format": "multiplier",
+      "trigger_condition": "bonus_active"
+    },
+    "free_spins": {
+      "x": 55,
+      "y": 95,
+      "width": 110,
+      "height": 45,
+      "expected_format": "integer",
+      "trigger_condition": "bonus_active"
+    },
+    "total_win": {
+      "x": 420,
+      "y": 280,
+      "width": 440,
+      "height": 110,
+      "expected_format": "currency",
+      "trigger_condition": "win_popup"
+    }
+  },
+
+  "preprocessing": {
+    "grayscale": true,
+    "threshold": {
+      "enabled": true,
+      "value": 135,
+      "method": "binary"
+    },
+    "denoise": {
+      "enabled": true,
+      "strength": 3
+    },
+    "contrast": {
+      "enabled": true,
+      "alpha": 1.5,
+      "beta": 5
+    }
+  },
+
+  "validation": {
+    "balance": { "min": 0, "max": 10000000, "confidence_threshold": 0.85 },
+    "bet": { "min": 0.10, "max": 500, "confidence_threshold": 0.90 },
+    "win": { "min": 0, "max": 50000000, "confidence_threshold": 0.85 },
+    "multiplier": { "min": 1, "max": 27, "confidence_threshold": 0.80 }
+  },
+
+  "game_states": {
+    "idle": { "active_regions": ["balance", "bet", "win"] },
+    "bonus_active": {
+      "active_regions": [
+        "balance", "bet", "win", "free_spins",
+        "sticky_wild_multiplier_1", "sticky_wild_multiplier_2",
+        "sticky_wild_multiplier_3", "sticky_wild_multiplier_4",
+        "sticky_wild_multiplier_5"
+      ]
+    },
+    "win_popup": { "active_regions": ["total_win"] }
+  },
+
+  "detection_hints": {
+    "bonus_trigger": {
+      "method": "scatter_count",
+      "threshold": 3,
+      "symbol": "paw_scatter"
+    },
+    "sticky_wild": {
+      "method": "symbol_detection",
+      "symbol": "dog_wild"
+    }
+  }
+}

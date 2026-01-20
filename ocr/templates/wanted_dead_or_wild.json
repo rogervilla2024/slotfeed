@@ -1,0 +1,167 @@
+{
+  "game_id": "wanted-dead-or-wild",
+  "game_name": "Wanted Dead or a Wild",
+  "provider": "hacksaw-gaming",
+  "version": "1.0",
+  "last_updated": "2026-01-04",
+  "rtp": 96.38,
+  "volatility": "extreme",
+  "max_multiplier": 12500,
+
+  "resolution": {
+    "width": 1280,
+    "height": 720,
+    "notes": "Template designed for 720p stream capture"
+  },
+
+  "regions": {
+    "balance": {
+      "x": 35,
+      "y": 675,
+      "width": 200,
+      "height": 38,
+      "description": "Balance display area (bottom-left)",
+      "expected_format": "currency",
+      "currency_symbols": ["$", "€", "£"]
+    },
+    "bet": {
+      "x": 530,
+      "y": 675,
+      "width": 160,
+      "height": 38,
+      "description": "Current bet amount (bottom-center)",
+      "expected_format": "currency"
+    },
+    "win": {
+      "x": 1030,
+      "y": 675,
+      "width": 210,
+      "height": 38,
+      "description": "Win amount display (bottom-right)",
+      "expected_format": "currency"
+    },
+    "vs_multiplier_left": {
+      "x": 120,
+      "y": 280,
+      "width": 100,
+      "height": 60,
+      "description": "Duel multiplier - left side (during VS feature)",
+      "expected_format": "multiplier",
+      "trigger_condition": "duel_active"
+    },
+    "vs_multiplier_right": {
+      "x": 1060,
+      "y": 280,
+      "width": 100,
+      "height": 60,
+      "description": "Duel multiplier - right side (during VS feature)",
+      "expected_format": "multiplier",
+      "trigger_condition": "duel_active"
+    },
+    "dead_multiplier": {
+      "x": 540,
+      "y": 200,
+      "width": 200,
+      "height": 80,
+      "description": "Dead or Wild multiplier display",
+      "expected_format": "multiplier",
+      "trigger_condition": "bonus_active"
+    },
+    "spins_remaining": {
+      "x": 45,
+      "y": 95,
+      "width": 100,
+      "height": 50,
+      "description": "Spins remaining in bonus",
+      "expected_format": "integer",
+      "trigger_condition": "bonus_active"
+    },
+    "total_win": {
+      "x": 400,
+      "y": 280,
+      "width": 480,
+      "height": 120,
+      "description": "Total win popup (big wins)",
+      "expected_format": "currency",
+      "trigger_condition": "win_popup"
+    }
+  },
+
+  "preprocessing": {
+    "grayscale": true,
+    "threshold": {
+      "enabled": true,
+      "value": 130,
+      "method": "binary"
+    },
+    "denoise": {
+      "enabled": true,
+      "strength": 4
+    },
+    "contrast": {
+      "enabled": true,
+      "alpha": 1.6,
+      "beta": 5
+    }
+  },
+
+  "validation": {
+    "balance": {
+      "min": 0,
+      "max": 10000000,
+      "confidence_threshold": 0.85
+    },
+    "bet": {
+      "min": 0.10,
+      "max": 2000,
+      "confidence_threshold": 0.90
+    },
+    "win": {
+      "min": 0,
+      "max": 100000000,
+      "confidence_threshold": 0.85
+    },
+    "multiplier": {
+      "min": 1,
+      "max": 12500,
+      "confidence_threshold": 0.75
+    }
+  },
+
+  "game_states": {
+    "idle": {
+      "description": "Normal base game",
+      "active_regions": ["balance", "bet", "win"]
+    },
+    "duel_active": {
+      "description": "VS Duel feature active",
+      "active_regions": ["balance", "bet", "win", "vs_multiplier_left", "vs_multiplier_right"]
+    },
+    "bonus_active": {
+      "description": "Dead or Wild feature active",
+      "active_regions": ["balance", "bet", "win", "dead_multiplier", "spins_remaining"]
+    },
+    "win_popup": {
+      "description": "Mega/Epic win popup",
+      "active_regions": ["total_win"],
+      "duration_ms": 8000
+    }
+  },
+
+  "detection_hints": {
+    "bonus_trigger": {
+      "method": "scatter_count",
+      "threshold": 3,
+      "symbol": "wanted_poster"
+    },
+    "duel_trigger": {
+      "method": "symbol_match",
+      "symbols": ["dead", "wild"]
+    }
+  },
+
+  "known_issues": [
+    "VS feature has animated text that can blur",
+    "Multiplier numbers during duel can overlap"
+  ]
+}

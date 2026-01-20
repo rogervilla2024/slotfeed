@@ -1,0 +1,25 @@
+[Unit]
+Description=SLOTFEED Result Publisher
+After=network.target postgresql.service redis.service
+Wants=postgresql.service redis.service
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/opt/slotfeed/backend
+Environment=PYTHONUNBUFFERED=1
+Environment=PATH=/opt/slotfeed/backend/venv/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/opt/slotfeed/backend/venv/bin/python -m app.workers.result_publisher --redis-url redis://localhost:6379/0 --batch-interval 2.0
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=slotfeed-publisher
+
+# Resource limits
+MemoryMax=200M
+CPUQuota=50%
+
+[Install]
+WantedBy=multi-user.target

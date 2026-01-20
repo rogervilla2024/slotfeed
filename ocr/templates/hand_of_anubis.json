@@ -1,0 +1,157 @@
+{
+  "game_id": "hand-of-anubis",
+  "game_name": "Hand of Anubis",
+  "provider": "hacksaw-gaming",
+  "version": "1.0",
+  "last_updated": "2026-01-02",
+
+  "resolution": {
+    "width": 1280,
+    "height": 720,
+    "notes": "Template designed for 720p stream capture"
+  },
+
+  "regions": {
+    "balance": {
+      "x": 45,
+      "y": 678,
+      "width": 190,
+      "height": 35,
+      "description": "Balance display area (bottom-left)",
+      "expected_format": "currency",
+      "currency_symbols": ["$", "€", "£"]
+    },
+    "bet": {
+      "x": 555,
+      "y": 678,
+      "width": 170,
+      "height": 35,
+      "description": "Current bet amount (bottom-center)",
+      "expected_format": "currency"
+    },
+    "win": {
+      "x": 1035,
+      "y": 678,
+      "width": 200,
+      "height": 35,
+      "description": "Win amount display (bottom-right)",
+      "expected_format": "currency"
+    },
+    "sticky_multiplier": {
+      "x": 600,
+      "y": 60,
+      "width": 80,
+      "height": 50,
+      "description": "Total sticky multiplier (top-center during bonus)",
+      "expected_format": "multiplier",
+      "trigger_condition": "bonus_active"
+    },
+    "spins_counter": {
+      "x": 1100,
+      "y": 100,
+      "width": 80,
+      "height": 40,
+      "description": "Free spins remaining",
+      "expected_format": "integer",
+      "trigger_condition": "bonus_active"
+    },
+    "total_win": {
+      "x": 480,
+      "y": 330,
+      "width": 320,
+      "height": 90,
+      "description": "Total win popup with Anubis animation",
+      "expected_format": "currency",
+      "trigger_condition": "win_popup"
+    }
+  },
+
+  "preprocessing": {
+    "grayscale": true,
+    "threshold": {
+      "enabled": true,
+      "value": 125,
+      "method": "binary"
+    },
+    "denoise": {
+      "enabled": true,
+      "strength": 4
+    },
+    "contrast": {
+      "enabled": true,
+      "alpha": 1.7,
+      "beta": 8
+    },
+    "resize": {
+      "enabled": false,
+      "scale": 2.0
+    }
+  },
+
+  "validation": {
+    "balance": {
+      "min": 0,
+      "max": 10000000,
+      "confidence_threshold": 0.85
+    },
+    "bet": {
+      "min": 0.10,
+      "max": 500,
+      "confidence_threshold": 0.90
+    },
+    "win": {
+      "min": 0,
+      "max": 50000000,
+      "confidence_threshold": 0.85
+    },
+    "sticky_multiplier": {
+      "min": 1,
+      "max": 5000,
+      "confidence_threshold": 0.78
+    }
+  },
+
+  "game_states": {
+    "idle": {
+      "description": "Normal cluster gameplay with Egyptian theme",
+      "active_regions": ["balance", "bet", "win"]
+    },
+    "spinning": {
+      "description": "Symbols dropping",
+      "active_regions": ["balance", "bet"],
+      "skip_win": true
+    },
+    "bonus_active": {
+      "description": "Free Spins with sticky multipliers and expanding wilds",
+      "active_regions": ["balance", "bet", "win", "sticky_multiplier", "spins_counter"],
+      "indicators": {
+        "anubis_wild": true,
+        "sticky_multipliers": true
+      }
+    },
+    "win_popup": {
+      "description": "Big win celebration with Anubis",
+      "active_regions": ["total_win"],
+      "duration_ms": 6500
+    }
+  },
+
+  "detection_hints": {
+    "bonus_trigger": {
+      "method": "scatter_count",
+      "threshold": 3,
+      "symbol": "scatter"
+    },
+    "expanding_wild": {
+      "method": "symbol_presence",
+      "symbol": "anubis_wild"
+    }
+  },
+
+  "known_issues": [
+    "Gold/Egyptian color palette can affect contrast",
+    "Sticky multipliers accumulate across positions",
+    "Expanding wilds create visual transitions",
+    "Cluster pays mechanic updates win frequently"
+  ]
+}

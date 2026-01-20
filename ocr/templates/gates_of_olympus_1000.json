@@ -1,0 +1,156 @@
+{
+  "game_id": "gates-of-olympus-1000",
+  "game_name": "Gates of Olympus 1000",
+  "provider": "pragmatic-play",
+  "version": "1.0",
+  "last_updated": "2026-01-02",
+
+  "resolution": {
+    "width": 1280,
+    "height": 720,
+    "notes": "Template designed for 720p stream capture"
+  },
+
+  "regions": {
+    "balance": {
+      "x": 50,
+      "y": 680,
+      "width": 200,
+      "height": 35,
+      "description": "Balance display area (bottom-left)",
+      "expected_format": "currency",
+      "currency_symbols": ["$", "€", "£", "₺"]
+    },
+    "bet": {
+      "x": 550,
+      "y": 680,
+      "width": 180,
+      "height": 35,
+      "description": "Current bet amount (bottom-center)",
+      "expected_format": "currency"
+    },
+    "win": {
+      "x": 1030,
+      "y": 680,
+      "width": 200,
+      "height": 35,
+      "description": "Win amount display (bottom-right)",
+      "expected_format": "currency"
+    },
+    "multiplier": {
+      "x": 600,
+      "y": 280,
+      "width": 80,
+      "height": 50,
+      "description": "Zeus multiplier orb (center during bonus)",
+      "expected_format": "multiplier",
+      "trigger_condition": "bonus_active"
+    },
+    "free_spins_counter": {
+      "x": 100,
+      "y": 100,
+      "width": 100,
+      "height": 40,
+      "description": "Free spins remaining counter",
+      "expected_format": "integer",
+      "trigger_condition": "bonus_active"
+    },
+    "total_win": {
+      "x": 500,
+      "y": 350,
+      "width": 280,
+      "height": 80,
+      "description": "Total win popup (appears after big wins)",
+      "expected_format": "currency",
+      "trigger_condition": "win_popup"
+    }
+  },
+
+  "preprocessing": {
+    "grayscale": true,
+    "threshold": {
+      "enabled": true,
+      "value": 145,
+      "method": "binary"
+    },
+    "denoise": {
+      "enabled": true,
+      "strength": 3
+    },
+    "contrast": {
+      "enabled": true,
+      "alpha": 1.6,
+      "beta": 0
+    },
+    "resize": {
+      "enabled": false,
+      "scale": 2.0
+    }
+  },
+
+  "validation": {
+    "balance": {
+      "min": 0,
+      "max": 10000000,
+      "confidence_threshold": 0.85
+    },
+    "bet": {
+      "min": 0.10,
+      "max": 1000,
+      "confidence_threshold": 0.90
+    },
+    "win": {
+      "min": 0,
+      "max": 100000000,
+      "confidence_threshold": 0.85
+    },
+    "multiplier": {
+      "min": 1,
+      "max": 1000,
+      "confidence_threshold": 0.80
+    }
+  },
+
+  "game_states": {
+    "idle": {
+      "description": "Normal gameplay, no bonus",
+      "active_regions": ["balance", "bet", "win"]
+    },
+    "spinning": {
+      "description": "Reels spinning",
+      "active_regions": ["balance", "bet"],
+      "skip_win": true
+    },
+    "bonus_active": {
+      "description": "Free spins feature active with 1000x max multipliers",
+      "active_regions": ["balance", "bet", "win", "multiplier", "free_spins_counter"],
+      "indicators": {
+        "screen_tint": "gold",
+        "multiplier_visible": true
+      }
+    },
+    "win_popup": {
+      "description": "Big win celebration popup",
+      "active_regions": ["total_win"],
+      "duration_ms": 6000
+    }
+  },
+
+  "detection_hints": {
+    "bonus_trigger": {
+      "method": "scatter_count",
+      "threshold": 4,
+      "symbol": "zeus_orb"
+    },
+    "tumble_active": {
+      "method": "multiplier_visible",
+      "region": "multiplier"
+    }
+  },
+
+  "known_issues": [
+    "Lightning effects can interfere with multiplier reading",
+    "1000x multipliers need special handling for 4-digit values",
+    "Zeus animation can temporarily obscure win display"
+  ]
+}

@@ -1,0 +1,27 @@
+[Unit]
+Description=SLOTFEED OCR Worker Manager
+After=network.target redis.service
+Wants=redis.service
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/opt/slotfeed/backend
+Environment=PYTHONUNBUFFERED=1
+Environment=PATH=/opt/slotfeed/backend/venv/bin:/usr/local/bin:/usr/bin:/bin
+Environment=OMP_NUM_THREADS=2
+Environment=DISABLE_MODEL_SOURCE_CHECK=True
+ExecStart=/opt/slotfeed/backend/venv/bin/python -m app.workers.worker_manager --workers 6 --redis-url redis://localhost:6379/0 --health-interval 30
+Restart=always
+RestartSec=15
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=slotfeed-worker-manager
+
+# Resource limits for manager + all workers
+MemoryMax=4G
+CPUQuota=1200%
+
+[Install]
+WantedBy=multi-user.target

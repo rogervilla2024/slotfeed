@@ -1,0 +1,161 @@
+{
+  "game_id": "money-train-4",
+  "game_name": "Money Train 4",
+  "provider": "relax-gaming",
+  "version": "1.0",
+  "last_updated": "2026-01-02",
+
+  "resolution": {
+    "width": 1280,
+    "height": 720,
+    "notes": "Template designed for 720p stream capture"
+  },
+
+  "regions": {
+    "balance": {
+      "x": 50,
+      "y": 675,
+      "width": 185,
+      "height": 38,
+      "description": "Balance display area (bottom-left)",
+      "expected_format": "currency",
+      "currency_symbols": ["$", "€", "£"]
+    },
+    "bet": {
+      "x": 550,
+      "y": 675,
+      "width": 175,
+      "height": 38,
+      "description": "Current bet amount (bottom-center)",
+      "expected_format": "currency"
+    },
+    "win": {
+      "x": 1030,
+      "y": 675,
+      "width": 210,
+      "height": 38,
+      "description": "Win amount display (bottom-right)",
+      "expected_format": "currency"
+    },
+    "respin_counter": {
+      "x": 600,
+      "y": 50,
+      "width": 80,
+      "height": 45,
+      "description": "Respins remaining in Money Cart bonus",
+      "expected_format": "integer",
+      "trigger_condition": "money_cart_active"
+    },
+    "total_multiplier": {
+      "x": 1050,
+      "y": 50,
+      "width": 180,
+      "height": 50,
+      "description": "Total accumulated multiplier in bonus",
+      "expected_format": "multiplier",
+      "trigger_condition": "money_cart_active"
+    },
+    "total_win": {
+      "x": 440,
+      "y": 300,
+      "width": 400,
+      "height": 120,
+      "description": "Total win popup after Money Cart",
+      "expected_format": "currency",
+      "trigger_condition": "win_popup"
+    }
+  },
+
+  "preprocessing": {
+    "grayscale": true,
+    "threshold": {
+      "enabled": true,
+      "value": 125,
+      "method": "binary"
+    },
+    "denoise": {
+      "enabled": true,
+      "strength": 4
+    },
+    "contrast": {
+      "enabled": true,
+      "alpha": 1.6,
+      "beta": 8
+    },
+    "resize": {
+      "enabled": false,
+      "scale": 2.0
+    }
+  },
+
+  "validation": {
+    "balance": {
+      "min": 0,
+      "max": 10000000,
+      "confidence_threshold": 0.85
+    },
+    "bet": {
+      "min": 0.10,
+      "max": 500,
+      "confidence_threshold": 0.90
+    },
+    "win": {
+      "min": 0,
+      "max": 300000000,
+      "confidence_threshold": 0.85
+    },
+    "total_multiplier": {
+      "min": 1,
+      "max": 150000,
+      "confidence_threshold": 0.75
+    }
+  },
+
+  "game_states": {
+    "idle": {
+      "description": "Normal base game gameplay",
+      "active_regions": ["balance", "bet", "win"]
+    },
+    "spinning": {
+      "description": "Reels spinning",
+      "active_regions": ["balance", "bet"],
+      "skip_win": true
+    },
+    "money_cart_active": {
+      "description": "Money Cart Bonus feature",
+      "active_regions": ["balance", "bet", "win", "respin_counter", "total_multiplier"],
+      "indicators": {
+        "persistent_symbols": true,
+        "tommy_guns": true
+      }
+    },
+    "win_popup": {
+      "description": "Massive win celebration (up to 150,000x)",
+      "active_regions": ["total_win"],
+      "duration_ms": 10000
+    }
+  },
+
+  "detection_hints": {
+    "bonus_trigger": {
+      "method": "scatter_count",
+      "threshold": 3,
+      "symbol": "bonus_scatter"
+    },
+    "persistent_symbol_types": [
+      "multiplier",
+      "payer",
+      "collector",
+      "persistent_collector",
+      "necromancer",
+      "tommy_gun"
+    ]
+  },
+
+  "known_issues": [
+    "150,000x max win requires 6-digit handling",
+    "Persistent symbols stack and can be hard to track",
+    "Tommy Guns feature creates rapid value changes",
+    "Western theme has warm color palette affecting contrast"
+  ]
+}

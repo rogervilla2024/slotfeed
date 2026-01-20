@@ -1,0 +1,52 @@
+# Live API - Database Integration
+"""
+Live Streaming Data Endpoints
+"""
+
+from typing import Optional
+from datetime import datetime, timezone, timedelta
+
+from fastapi import APIRouter, Depends, Query
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, func, desc, and_
+from sqlalchemy.orm import selectinload
+
+from ....models import Session, Streamer, BigWin, Game
+from ....core.database import get_db
+
+router = APIRouter()
+
+
+@router.get("/streams")
+async def get_live_streams(
+    platform: Optional[str] = Query(None),
+    db: AsyncSession = Depends(get_db),
+):
+    query = select(Session).options(
+        selectinload(Session.streamer)
+    ).where(Session.is_live == True)
+
+    if platform:
+        query = query.where(Session.platform == platform)
+
+    query = query.order_by(desc(Session.avg_viewers))
+    result = await db.execute(query)
+    sessions = result.scalars().all()
+
+    live_streams = []
+    for s in sessions:
+        live_streams.append({
+            "sessionId": s.id,
+            "platform": s.platform,
+            "startedAt": s.started_at.isoformat() if s.started_at else None,
+            "viewers": s.avg_viewers,
+            "streamer": {
+                "id": s.streamer.id,
+                "username": s.streamer.username,
+                "displayName": s.streamer.display_name or s.streamer.username,
+                "slug": s.streamer.slug,
+                "avatarUrl": s.streamer.avatar_url,
+            } if s.streamer else None,
+        })
+
+    return {"liveCount": len(live_streams), "streams": live_streams, "updatedAt": 

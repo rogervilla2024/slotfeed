@@ -1,0 +1,103 @@
+{
+  "game_id": "fruit-party",
+  "game_name": "Fruit Party",
+  "provider": "pragmatic-play",
+  "version": "1.0",
+  "last_updated": "2026-01-04",
+  "rtp": 96.47,
+  "volatility": "high",
+  "max_multiplier": 5000,
+
+  "resolution": {
+    "width": 1280,
+    "height": 720
+  },
+
+  "regions": {
+    "balance": {
+      "x": 40,
+      "y": 678,
+      "width": 185,
+      "height": 35,
+      "expected_format": "currency"
+    },
+    "bet": {
+      "x": 535,
+      "y": 678,
+      "width": 165,
+      "height": 35,
+      "expected_format": "currency"
+    },
+    "win": {
+      "x": 1040,
+      "y": 678,
+      "width": 200,
+      "height": 35,
+      "expected_format": "currency"
+    },
+    "cluster_multiplier": {
+      "x": 555,
+      "y": 280,
+      "width": 170,
+      "height": 70,
+      "expected_format": "multiplier",
+      "trigger_condition": "cluster_win"
+    },
+    "tumble_multiplier": {
+      "x": 565,
+      "y": 75,
+      "width": 150,
+      "height": 60,
+      "expected_format": "multiplier",
+      "trigger_condition": "bonus_active"
+    },
+    "free_spins": {
+      "x": 50,
+      "y": 90,
+      "width": 110,
+      "height": 45,
+      "expected_format": "integer",
+      "trigger_condition": "bonus_active"
+    },
+    "total_win": {
+      "x": 420,
+      "y": 280,
+      "width": 440,
+      "height": 110,
+      "expected_format": "currency",
+      "trigger_condition": "win_popup"
+    }
+  },
+
+  "preprocessing": {
+    "grayscale": true,
+    "threshold": {
+      "enabled": true,
+      "value": 140,
+      "method": "binary"
+    },
+    "denoise": {
+      "enabled": true,
+      "strength": 3
+    },
+    "contrast": {
+      "enabled": true,
+      "alpha": 1.4,
+      "beta": 0
+    }
+  },
+
+  "validation": {
+    "balance": { "min": 0, "max": 10000000, "confidence_threshold": 0.85 },
+    "bet": { "min": 0.10, "max": 1000, "confidence_threshold": 0.90 },
+    "win": { "min": 0, "max": 50000000, "confidence_threshold": 0.85 },
+    "multiplier": { "min": 1, "max": 256, "confidence_threshold": 0.80 }
+  },
+
+  "game_states": {
+    "idle": { "active_regions": ["balance", "bet", "win"] },
+    "cluster_win": { "active_regions": ["balance", "bet", "win", "cluster_multiplier"] },
+    "bonus_active": { "active_regions": ["balance", "bet", "win", "tumble_multiplier", "free_spins"] },
+    "win_popup": { "active_regions": ["total_win"] }
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "game_id": "big-bass-bonanza",
+  "game_name": "Big Bass Bonanza",
+  "provider": "pragmatic-play",
+  "version": "1.0",
+  "last_updated": "2026-01-04",
+  "rtp": 96.71,
+  "volatility": "high",
+  "max_multiplier": 2100,
+
+  "resolution": {
+    "width": 1280,
+    "height": 720
+  },
+
+  "regions": {
+    "balance": {
+      "x": 45,
+      "y": 680,
+      "width": 180,
+      "height": 35,
+      "description": "Balance display (bottom-left)",
+      "expected_format": "currency"
+    },
+    "bet": {
+      "x": 540,
+      "y": 680,
+      "width": 160,
+      "height": 35,
+      "description": "Bet amount (bottom-center)",
+      "expected_format": "currency"
+    },
+    "win": {
+      "x": 1040,
+      "y": 680,
+      "width": 195,
+      "height": 35,
+      "description": "Win display (bottom-right)",
+      "expected_format": "currency"
+    },
+    "fish_value": {
+      "x": 560,
+      "y": 150,
+      "width": 160,
+      "height": 70,
+      "description": "Fish money value (center-top during bonus)",
+      "expected_format": "currency",
+      "trigger_condition": "bonus_active"
+    },
+    "collected_fish": {
+      "x": 60,
+      "y": 90,
+      "width": 180,
+      "height": 50,
+      "description": "Total collected fish value",
+      "expected_format": "currency",
+      "trigger_condition": "bonus_active"
+    },
+    "free_spins": {
+      "x": 1100,
+      "y": 90,
+      "width": 100,
+      "height": 45,
+      "description": "Free spins remaining",
+      "expected_format": "integer",
+      "trigger_condition": "bonus_active"
+    },
+    "total_win": {
+      "x": 420,
+      "y": 280,
+      "width": 440,
+      "height": 110,
+      "description": "Total win popup",
+      "expected_format": "currency",
+      "trigger_condition": "win_popup"
+    }
+  },
+
+  "preprocessing": {
+    "grayscale": true,
+    "threshold": {
+      "enabled": true,
+      "value": 140,
+      "method": "binary"
+    },
+    "denoise": {
+      "enabled": true,
+      "strength": 3
+    },
+    "contrast": {
+      "enabled": true,
+      "alpha": 1.4,
+      "beta": 0
+    }
+  },
+
+  "validation": {
+    "balance": {
+      "min": 0,
+      "max": 10000000,
+      "confidence_threshold": 0.85
+    },
+    "bet": {
+      "min": 0.10,
+      "max": 500,
+      "confidence_threshold": 0.90
+    },
+    "win": {
+      "min": 0,
+      "max": 50000000,
+      "confidence_threshold": 0.85
+    }
+  },
+
+  "game_states": {
+    "idle": {
+      "description": "Base game",
+      "active_regions": ["balance", "bet", "win"]
+    },
+    "bonus_active": {
+      "description": "Fishing feature active",
+      "active_regions": ["balance", "bet", "win", "fish_value", "collected_fish", "free_spins"]
+    },
+    "win_popup": {
+      "description": "Big win celebration",
+      "active_regions": ["total_win"]
+    }
+  },
+
+  "detection_hints": {
+    "bonus_trigger": {
+      "method": "scatter_count",
+      "threshold": 3,
+      "symbol": "fisherman"
+    }
+  }
+}

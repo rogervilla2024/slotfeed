@@ -1,0 +1,27 @@
+[Unit]
+Description=SLOTFEED OCR Worker %i
+After=network.target redis.service
+Wants=redis.service
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/opt/slotfeed/backend
+Environment=PYTHONUNBUFFERED=1
+Environment=PATH=/opt/slotfeed/backend/venv/bin:/usr/local/bin:/usr/bin:/bin
+Environment=OMP_NUM_THREADS=2
+Environment=DISABLE_MODEL_SOURCE_CHECK=True
+ExecStart=/opt/slotfeed/backend/venv/bin/python -m app.workers.ocr_worker --worker-id %i --redis-url redis://localhost:6379/0
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=slotfeed-ocr-worker-%i
+
+# Resource limits per worker
+MemoryMax=600M
+CPUQuota=200%
+
+[Install]
+WantedBy=multi-user.target

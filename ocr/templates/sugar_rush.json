@@ -1,0 +1,153 @@
+{
+  "game_id": "sugar-rush",
+  "game_name": "Sugar Rush",
+  "provider": "pragmatic-play",
+  "version": "1.0",
+  "last_updated": "2026-01-04",
+  "rtp": 96.50,
+  "volatility": "high",
+  "max_multiplier": 5000,
+
+  "resolution": {
+    "width": 1280,
+    "height": 720,
+    "notes": "Template designed for 720p stream capture"
+  },
+
+  "regions": {
+    "balance": {
+      "x": 40,
+      "y": 678,
+      "width": 180,
+      "height": 35,
+      "description": "Balance display area (bottom-left)",
+      "expected_format": "currency",
+      "currency_symbols": ["$", "€", "£"]
+    },
+    "bet": {
+      "x": 540,
+      "y": 678,
+      "width": 150,
+      "height": 35,
+      "description": "Current bet amount (bottom-center)",
+      "expected_format": "currency"
+    },
+    "win": {
+      "x": 1050,
+      "y": 678,
+      "width": 190,
+      "height": 35,
+      "description": "Win amount display (bottom-right)",
+      "expected_format": "currency"
+    },
+    "multiplier": {
+      "x": 565,
+      "y": 80,
+      "width": 150,
+      "height": 60,
+      "description": "Cluster multiplier display (top-center)",
+      "expected_format": "multiplier",
+      "trigger_condition": "tumble_active"
+    },
+    "cluster_win": {
+      "x": 520,
+      "y": 300,
+      "width": 240,
+      "height": 70,
+      "description": "Cluster win popup (center screen)",
+      "expected_format": "currency",
+      "trigger_condition": "cluster_win"
+    },
+    "free_spins_counter": {
+      "x": 50,
+      "y": 100,
+      "width": 120,
+      "height": 45,
+      "description": "Free spins remaining counter",
+      "expected_format": "integer",
+      "trigger_condition": "bonus_active"
+    },
+    "total_win": {
+      "x": 440,
+      "y": 300,
+      "width": 400,
+      "height": 100,
+      "description": "Total win celebration popup",
+      "expected_format": "currency",
+      "trigger_condition": "win_popup"
+    }
+  },
+
+  "preprocessing": {
+    "grayscale": true,
+    "threshold": {
+      "enabled": true,
+      "value": 135,
+      "method": "binary"
+    },
+    "denoise": {
+      "enabled": true,
+      "strength": 3
+    },
+    "contrast": {
+      "enabled": true,
+      "alpha": 1.4,
+      "beta": 10
+    }
+  },
+
+  "validation": {
+    "balance": {
+      "min": 0,
+      "max": 10000000,
+      "confidence_threshold": 0.85
+    },
+    "bet": {
+      "min": 0.10,
+      "max": 1000,
+      "confidence_threshold": 0.90
+    },
+    "win": {
+      "min": 0,
+      "max": 50000000,
+      "confidence_threshold": 0.85
+    },
+    "multiplier": {
+      "min": 1,
+      "max": 128,
+      "confidence_threshold": 0.80
+    }
+  },
+
+  "game_states": {
+    "idle": {
+      "description": "Normal gameplay",
+      "active_regions": ["balance", "bet", "win"]
+    },
+    "tumble_active": {
+      "description": "Tumble feature - candies falling",
+      "active_regions": ["balance", "bet", "win", "multiplier"]
+    },
+    "bonus_active": {
+      "description": "Free spins feature with multipliers",
+      "active_regions": ["balance", "bet", "win", "multiplier", "free_spins_counter"]
+    },
+    "win_popup": {
+      "description": "Big win popup display",
+      "active_regions": ["total_win"],
+      "duration_ms": 6000
+    }
+  },
+
+  "detection_hints": {
+    "bonus_trigger": {
+      "method": "scatter_count",
+      "threshold": 3,
+      "symbol": "lollipop_scatter"
+    },
+    "multiplier_spot": {
+      "method": "color_detection",
+      "color": "rainbow_gradient"
+    }
+  }
+}

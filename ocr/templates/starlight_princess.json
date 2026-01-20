@@ -1,0 +1,138 @@
+{
+  "game_id": "starlight-princess",
+  "game_name": "Starlight Princess",
+  "provider": "pragmatic-play",
+  "version": "1.0",
+  "last_updated": "2026-01-04",
+  "rtp": 96.50,
+  "volatility": "high",
+  "max_multiplier": 5000,
+
+  "resolution": {
+    "width": 1280,
+    "height": 720
+  },
+
+  "regions": {
+    "balance": {
+      "x": 40,
+      "y": 680,
+      "width": 185,
+      "height": 35,
+      "description": "Balance display (bottom-left)",
+      "expected_format": "currency"
+    },
+    "bet": {
+      "x": 530,
+      "y": 680,
+      "width": 170,
+      "height": 35,
+      "description": "Bet amount (bottom-center)",
+      "expected_format": "currency"
+    },
+    "win": {
+      "x": 1035,
+      "y": 680,
+      "width": 200,
+      "height": 35,
+      "description": "Win display (bottom-right)",
+      "expected_format": "currency"
+    },
+    "tumble_multiplier": {
+      "x": 560,
+      "y": 85,
+      "width": 160,
+      "height": 65,
+      "description": "Tumble multiplier (top-center during feature)",
+      "expected_format": "multiplier",
+      "trigger_condition": "tumble_active"
+    },
+    "free_spins_counter": {
+      "x": 55,
+      "y": 95,
+      "width": 110,
+      "height": 45,
+      "description": "Free spins remaining",
+      "expected_format": "integer",
+      "trigger_condition": "bonus_active"
+    },
+    "total_win": {
+      "x": 430,
+      "y": 290,
+      "width": 420,
+      "height": 100,
+      "description": "Total win popup",
+      "expected_format": "currency",
+      "trigger_condition": "win_popup"
+    }
+  },
+
+  "preprocessing": {
+    "grayscale": false,
+    "threshold": {
+      "enabled": true,
+      "value": 145,
+      "method": "binary"
+    },
+    "denoise": {
+      "enabled": true,
+      "strength": 3
+    },
+    "contrast": {
+      "enabled": true,
+      "alpha": 1.5,
+      "beta": 5
+    }
+  },
+
+  "validation": {
+    "balance": {
+      "min": 0,
+      "max": 10000000,
+      "confidence_threshold": 0.85
+    },
+    "bet": {
+      "min": 0.10,
+      "max": 1000,
+      "confidence_threshold": 0.90
+    },
+    "win": {
+      "min": 0,
+      "max": 50000000,
+      "confidence_threshold": 0.85
+    },
+    "multiplier": {
+      "min": 1,
+      "max": 500,
+      "confidence_threshold": 0.80
+    }
+  },
+
+  "game_states": {
+    "idle": {
+      "active_regions": ["balance", "bet", "win"]
+    },
+    "tumble_active": {
+      "active_regions": ["balance", "bet", "win", "tumble_multiplier"]
+    },
+    "bonus_active": {
+      "active_regions": ["balance", "bet", "win", "tumble_multiplier", "free_spins_counter"]
+    },
+    "win_popup": {
+      "active_regions": ["total_win"]
+    }
+  },
+
+  "detection_hints": {
+    "bonus_trigger": {
+      "method": "scatter_count",
+      "threshold": 4,
+      "symbol": "star_scatter"
+    }
+  },
+
+  "known_issues": [
+    "Pink/purple color scheme can affect OCR accuracy",
+    "Star animations during wins can obscure text"
+  ]
+}

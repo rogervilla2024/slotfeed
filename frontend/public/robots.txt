@@ -1,0 +1,49 @@
+# robots.txt for liveslotdata.com
+# Real-Time Slot Streaming Analytics
+
+User-agent: *
+Allow: /
+
+# Allow major search engines full access
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# Disallow admin and auth pages
+Disallow: /admin
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /profile/
+Disallow: /api/
+
+# Sitemaps
+Sitemap: https://liveslotdata.com/sitemap.xml
+Sitemap: https://liveslotdata.com/sitemap-streamers.xml
+Sitemap: https://liveslotdata.com/sitemap-games.xml
+
+# Crawl-delay for politeness (optional, not all bots respect this)
+Crawl-delay: 1
+
+# Block AI training bots (optional - remove if you want AI indexing)
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /

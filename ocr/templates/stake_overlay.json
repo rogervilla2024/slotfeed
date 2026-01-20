@@ -1,0 +1,74 @@
+{
+  "template_id": "stake_overlay",
+  "name": "Stake.com Overlay Template",
+  "description": "ROI regions for Stake casino overlay on streams",
+  "resolution": {
+    "width": 1920,
+    "height": 1080
+  },
+  "regions": {
+    "wallet_balance": {
+      "description": "Wallet balance next to Stake logo",
+      "x": 320,
+      "y": 45,
+      "width": 120,
+      "height": 35,
+      "expected_format": "currency"
+    },
+    "top_balance": {
+      "description": "Main balance in top bar",
+      "x": 620,
+      "y": 8,
+      "width": 100,
+      "height": 25,
+      "expected_format": "currency"
+    },
+    "bonus_hunt_target": {
+      "description": "Bonus hunt target amount",
+      "x": 45,
+      "y": 75,
+      "width": 80,
+      "height": 25,
+      "expected_format": "currency"
+    },
+    "bonus_hunt_count": {
+      "description": "Number of bonuses",
+      "x": 45,
+      "y": 95,
+      "width": 50,
+      "height": 25,
+      "expected_format": "number"
+    },
+    "current_slot_info": {
+      "description": "Current slot game info bar",
+      "x": 100,
+      "y": 405,
+      "width": 600,
+      "height": 30,
+      "expected_format": "text"
+    },
+    "best_win": {
+      "description": "Best win amount",
+      "x": 350,
+      "y": 405,
+      "width": 120,
+      "height": 25,
+      "expected_format": "currency"
+    },
+    "big_win_popup": {
+      "description": "Big win popup in center",
+      "x": 660,
+      "y": 300,
+      "width": 600,
+      "height": 200,
+      "expected_format": "currency"
+    }
+  },
+  "preprocessing": {
+    "grayscale": false,
+    "contrast": 1.2,
+    "brightness": 1.0,
+    "threshold": null,
+    "denoise": true
+  }
+}

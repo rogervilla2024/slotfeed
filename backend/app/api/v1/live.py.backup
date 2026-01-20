@@ -1,0 +1,69 @@
+"""Live streaming data endpoints"""
+import random
+from datetime import datetime, timedelta
+from fastapi import APIRouter, Query
+
+router = APIRouter(prefix="/live", tags=["live"])
+
+GAMES = [
+    {"id": "sweet-bonanza", "name": "Sweet Bonanza"},
+    {"id": "gates-of-olympus", "name": "Gates of Olympus"},
+    {"id": "big-bass-bonanza", "name": "Big Bass Bonanza"},
+    {"id": "fruit-party", "name": "Fruit Party"},
+    {"id": "sugar-rush", "name": "Sugar Rush"},
+]
+
+STREAMERS = ["Roshtein", "ClassyBeef", "Trainwreckstv", "DeuceAce", "Mellstroy"]
+
+@router.get("/streams")
+async def get_live_streams(game_id: str = Query(None)):
+    games = random.sample(GAMES, random.randint(2, 4))
+    data = []
+    for game in games:
+        data.append({
+            "gameId": game["id"],
+            "gameName": game["name"],
+            "streamersCount": random.randint(2, 8),
+            "streamers": [
+                {"id": f"s{i}", "name": random.choice(STREAMERS), "platform": "kick", "viewers": random.randint(100, 5000)}
+                for i in range(random.randint(2, 4))
+            ],
+            "lastUpdated": datetime.utcnow().isoformat(),
+        })
+    return data
+
+@router.get("/big-wins")
+async def get_big_wins(limit: int = Query(10), sort: str = Query("recent")):
+    data = []
+    for _ in range(min(limit, 10)):
+        data.append({
+            "id": f"win-{random.randint(100000, 999999)}",
+            "streamerName": random.choice(STREAMERS),
+            "gameName": random.choice(GAMES)["name"],
+            "amount": round(random.uniform(50, 5000), 2),
+            "multiplier": round(random.uniform(10, 500), 2),
+            "timestamp": (datetime.utcnow() - timedelta(hours=random.randint(0, 24))).isoformat(),
+            "platform": "kick",
+        })
+    data.sort(key=lambda x: x["timestamp"], reverse=True)
+    return data
+
+@router.get("/rtp-tracker")
+async def get_rtp_tracker(limit: int = Query(8)):
+    data = []
+    for _ in range(limit):
+        game = random.choice(GAMES)
+        rtp_val = 96.0 + random.uniform(-2, 2)
+        sparkline = [round(rtp_val + random.uniform(-1, 1), 2) for _ in range(10)]
+        data.append({
+            "gameId": game["id"],
+            "gameName": game["name"],
+            "streamerName": random.choice(STREAMERS),
+            "currentRtp": round(sparkline[-1], 2),
+            "theoreticalRtp": 96.0,
+            "status": random.choice(["hot", "cold", "neutral"]),
+            "trend": random.choice(["up", "down", "stable"]),
+            "sparkline": sparkline,
+            "lastUpdated": datetime.utcnow().isoformat(),
+        })
+    return data

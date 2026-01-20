@@ -1,0 +1,157 @@
+{
+  "game_id": "dork-unit",
+  "game_name": "Dork Unit",
+  "provider": "hacksaw-gaming",
+  "version": "1.0",
+  "last_updated": "2026-01-02",
+
+  "resolution": {
+    "width": 1280,
+    "height": 720,
+    "notes": "Template designed for 720p stream capture"
+  },
+
+  "regions": {
+    "balance": {
+      "x": 45,
+      "y": 678,
+      "width": 190,
+      "height": 35,
+      "description": "Balance display area (bottom-left)",
+      "expected_format": "currency",
+      "currency_symbols": ["$", "€", "£"]
+    },
+    "bet": {
+      "x": 555,
+      "y": 678,
+      "width": 170,
+      "height": 35,
+      "description": "Current bet amount (bottom-center)",
+      "expected_format": "currency"
+    },
+    "win": {
+      "x": 1035,
+      "y": 678,
+      "width": 200,
+      "height": 35,
+      "description": "Win amount display (bottom-right)",
+      "expected_format": "currency"
+    },
+    "multiplier": {
+      "x": 580,
+      "y": 280,
+      "width": 120,
+      "height": 60,
+      "description": "Sticky multiplier display (center during bonus)",
+      "expected_format": "multiplier",
+      "trigger_condition": "bonus_active"
+    },
+    "spins_counter": {
+      "x": 1100,
+      "y": 100,
+      "width": 80,
+      "height": 40,
+      "description": "Spins remaining counter",
+      "expected_format": "integer",
+      "trigger_condition": "bonus_active"
+    },
+    "total_win": {
+      "x": 480,
+      "y": 340,
+      "width": 320,
+      "height": 90,
+      "description": "Total win popup with character animation",
+      "expected_format": "currency",
+      "trigger_condition": "win_popup"
+    }
+  },
+
+  "preprocessing": {
+    "grayscale": true,
+    "threshold": {
+      "enabled": true,
+      "value": 135,
+      "method": "binary"
+    },
+    "denoise": {
+      "enabled": true,
+      "strength": 3
+    },
+    "contrast": {
+      "enabled": true,
+      "alpha": 1.5,
+      "beta": 5
+    },
+    "resize": {
+      "enabled": false,
+      "scale": 2.0
+    }
+  },
+
+  "validation": {
+    "balance": {
+      "min": 0,
+      "max": 10000000,
+      "confidence_threshold": 0.85
+    },
+    "bet": {
+      "min": 0.10,
+      "max": 500,
+      "confidence_threshold": 0.90
+    },
+    "win": {
+      "min": 0,
+      "max": 100000000,
+      "confidence_threshold": 0.85
+    },
+    "multiplier": {
+      "min": 1,
+      "max": 10000,
+      "confidence_threshold": 0.78
+    }
+  },
+
+  "game_states": {
+    "idle": {
+      "description": "Normal cluster gameplay",
+      "active_regions": ["balance", "bet", "win"]
+    },
+    "spinning": {
+      "description": "Symbols dropping",
+      "active_regions": ["balance", "bet"],
+      "skip_win": true
+    },
+    "bonus_active": {
+      "description": "Free Spins with sticky multipliers",
+      "active_regions": ["balance", "bet", "win", "multiplier", "spins_counter"],
+      "indicators": {
+        "dork_characters": true,
+        "sticky_multipliers": true
+      }
+    },
+    "win_popup": {
+      "description": "Big win celebration with character dance",
+      "active_regions": ["total_win"],
+      "duration_ms": 6000
+    }
+  },
+
+  "detection_hints": {
+    "bonus_trigger": {
+      "method": "scatter_count",
+      "threshold": 3,
+      "symbol": "bonus_character"
+    },
+    "full_screen_win": {
+      "method": "symbol_coverage",
+      "threshold": 0.8
+    }
+  },
+
+  "known_issues": [
+    "55,555x max win requires 5-digit handling",
+    "Cartoon style can have bright colors affecting OCR",
+    "Character animations can overlap number displays",
+    "Cluster pays mechanic updates win frequently"
+  ]
+}
