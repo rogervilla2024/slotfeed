@@ -95,6 +95,32 @@ interface Streamer {
   - `streamer/[username]/sessions/[sessionId]/page.tsx`
   - `session-detail-content.tsx`
 
+### Slots Page Fix
+- Fixed `setIsLoading(false)` not being called when API returns data
+- Page was stuck in infinite loading state
+- File: `frontend/src/app/slots/page.tsx`
+
+## Claude Code Agents
+
+### backend-architect
+**Location:** `.claude/agents/backend-architect.md`
+**Model:** Sonnet
+**Use for:** RESTful APIs, microservice boundaries, database schemas, scalability planning, performance optimization
+
+**Focus Areas:**
+- RESTful API design (versioning, error handling)
+- Service boundary definition
+- Database schema design (normalization, indexes, sharding)
+- Caching strategies
+- Security patterns (auth, rate limiting)
+
+**Output Format:**
+- API endpoint definitions with example requests/responses
+- Service architecture diagrams (mermaid/ASCII)
+- Database schema with relationships
+- Technology recommendations
+- Bottlenecks and scaling considerations
+
 ## Commands
 
 ### Seed Database
@@ -113,4 +139,9 @@ npm run dev
 ```bash
 cd /opt/slotfeed/backend
 uvicorn app.main:app --reload
+```
+
+### Install Claude Code Templates
+```bash
+npx claude-code-templates@latest --agent=development-team/backend-architect --yes
 ```

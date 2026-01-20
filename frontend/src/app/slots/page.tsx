@@ -85,11 +85,14 @@ export default function SlotsPage() {
         const response = await fetch('/api/v1/games');
         if (response.ok) {
           const data = await response.json();
-          if (data.games?.length > 0 || data?.length > 0) {
-            setGames(data.games || data);
-            setIsLoading(false);
-            return;
+          const gamesData = data.games || data;
+          if (Array.isArray(gamesData) && gamesData.length > 0) {
+            setGames(gamesData);
+          } else {
+            setGames([]);
           }
+          setIsLoading(false);
+          return;
         }
       } catch (error) {
         console.log('Using local game data');

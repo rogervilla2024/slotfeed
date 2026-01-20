@@ -106,7 +106,7 @@ const TabsContent = React.forwardRef<HTMLDivElement, TabsContentProps>(
     const { value: selectedValue } = useTabsContext();
     const isSelected = selectedValue === value;
 
-    // Use CSS to hide/show instead of returning null to prevent hydration issues
+    // Use hidden attribute to hide/show instead of returning null to prevent hydration issues
     return (
       <div
         ref={ref}
@@ -115,7 +115,6 @@ const TabsContent = React.forwardRef<HTMLDivElement, TabsContentProps>(
         hidden={!isSelected}
         className={cn(
           'mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-          !isSelected && 'hidden',
           className
         )}
         {...props}
