@@ -87,6 +87,7 @@ export default function SlotsPage() {
           const data = await response.json();
           if (data.games?.length > 0 || data?.length > 0) {
             setGames(data.games || data);
+            setIsLoading(false);
             return;
           }
         }

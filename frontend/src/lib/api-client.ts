@@ -252,13 +252,13 @@ export async function getLiveStreams() {
   return fetchApi<LiveStream[]>(endpoint, {}, 'live-streams');
 }
 
-export async function getBigWins() {
+export async function getBigWins(): Promise<ApiResponse<any[]>> {
   const endpoint = '/big-wins/';
   const response = await fetchApi<{ wins: any[]; total: number }>(endpoint, {}, 'big-wins');
 
   // Map API response to frontend expected format
   if (response.data && response.data.wins) {
-    response.data = response.data.wins.map((win: any) => ({
+    const mappedWins = response.data.wins.map((win: any) => ({
       id: win.id,
       streamerName: win.streamer?.displayName || win.streamer?.username || 'Unknown',
       gameName: win.game?.name || 'Unknown',
@@ -267,10 +267,11 @@ export async function getBigWins() {
       timestamp: win.timestamp,
       platform: 'kick',
       videoUrl: win.clipUrl || '#',
-    })) as any;
+    }));
+    return { data: mappedWins, status: response.status };
   }
 
-  return response;
+  return { data: [], status: response.status, error: response.error };
 }
 
 export async function getRtpTracker() {
